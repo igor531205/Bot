@@ -2,7 +2,8 @@
 git init
 
 Виртуальное окружение
-python -m venv .env
-./.env/Scripts/python.exe -m pip list
-./.env/Scripts/python.exe -m pip freeze > requirements.txt
-
+./ ~python -m venv .env
+./ .env/Scripts/python.exe -m pip list
+./ .env/Scripts/python.exe -m pip freeze > requirements.txt
+./ .env/Scripts/python.exe -m pip install -r requirements.txt
+./ .env/Scripts/python.exe -m pip install python-telegram-bot

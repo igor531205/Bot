@@ -225,10 +225,6 @@
 
 #     app.run_polling()
 
-
-from getpass import getuser
-
-
 def log(data_log: list):
     """log to file.
     """
@@ -258,20 +254,36 @@ def main():
         ChatMemberHandler,
         Filters,
         CallbackContext)
+    import logging
+    from typing import Tuple, Optional
+
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    )
+
+    logger = logging.getLogger(__name__)
 
     def start(update: Update, context: CallbackContext) -> None:
         """Command start."""
-
         if update.effective_user.username in masters:
 
             user_name = update.effective_user.full_name if \
                 update.effective_user.full_name is None else \
                 update.effective_user.username
 
-            update.message.reply_text(f'Hello  "{user_name}"')
+            # chats.append(update.effective_chat.id) TODO: if
 
-            print(update.effective_chat.getChatMember)
-            # chats_users[update.effective_chat.id] = TODO
+            update.message.reply_text(f'Hello  "{user_name}"')
+        print(chats)
+        # chat_id = update.message.chat_id
+        # first_name = update.message.chat.first_name
+        # last_name = update.message.chat.last_name
+        # username = update.message.chat.username
+        # print("chat_id : {}; and firstname : {}; lastname : {};  username {}". format(
+        #     chat_id, first_name, last_name, username))
+
+        # print(ChatMemberHandler.CHAT_MEMBER)
+        # chats_users[update.effective_chat.id] = TODO
 
     def kill(update: Update, context: CallbackContext) -> None:
         """Command kill Bot."""
@@ -282,107 +294,22 @@ def main():
 
             if update.effective_chat.type != 'private':
 
-                # TODO chats_users[update.effective_chat.id]
                 update.effective_chat.leave()
 
-            os.kill(os.getpid(), signal.SIGINT)
+            chats.remove(update.effective_chat.id)
+            # os.kill(os.getpid(), signal.SIGINT)
 
     def echo(update: Update, context: CallbackContext) -> None:
         """Echo the user message."""
-        print('mes')
         update.message.reply_text(update.message.text)
-
-    # from typing import Tuple, Optional
-
-    # def extract_status_change(
-    #     chat_member_update: ChatMemberUpdated,
-    # ) -> Optional[Tuple[bool, bool]]:
-    #     """Takes a ChatMemberUpdated instance and extracts whether the 'old_chat_member' was a member
-    #     of the chat and whether the 'new_chat_member' is a member of the chat. Returns None, if
-    #     the status didn't change.
-    #     """
-    #     status_change = chat_member_update.difference().get("status")
-    #     old_is_member, new_is_member = chat_member_update.difference().get("is_member",
-    #                                                                        (None, None))
-
-    #     if status_change is None:
-    #         return None
-
-    #     old_status, new_status = status_change
-    #     was_member = old_status in [
-    #         ChatMember.MEMBER,
-    #         ChatMember.CREATOR,
-    #         ChatMember.ADMINISTRATOR,
-    #     ] or (old_status == ChatMember.RESTRICTED and old_is_member is True)
-    #     is_member = new_status in [
-    #         ChatMember.MEMBER,
-    #         ChatMember.CREATOR,
-    #         ChatMember.ADMINISTRATOR,
-    #     ] or (new_status == ChatMember.RESTRICTED and new_is_member is True)
-
-    #     return was_member, is_member
-
-    # def track_chats(update: Update, context: CallbackContext) -> None:
-    #     """Tracks the chats the bot is in."""
-    #     result = extract_status_change(update.my_chat_member)
-    #     if result is None:
-    #         return
-    #     was_member, is_member = result
-
-    #     # Let's check who is responsible for the change
-    #     cause_name = update.effective_user.full_name
-
-    #     # Handle chat types differently:
-    #     chat = update.effective_chat
-    #     if chat.type == Chat.PRIVATE:
-    #         if not was_member and is_member:
-    #             logger.info("%s started the bot", cause_name)
-    #             context.bot_data.setdefault("user_ids", set()).add(chat.id)
-    #         elif was_member and not is_member:
-    #             logger.info("%s blocked the bot", cause_name)
-    #             context.bot_data.setdefault("user_ids", set()).discard(chat.id)
-    #     elif chat.type in [Chat.GROUP, Chat.SUPERGROUP]:
-    #         if not was_member and is_member:
-    #             logger.info("%s added the bot to the group %s",
-    #                         cause_name, chat.title)
-    #             context.bot_data.setdefault("group_ids", set()).add(chat.id)
-    #         elif was_member and not is_member:
-    #             logger.info("%s removed the bot from the group %s",
-    #                         cause_name, chat.title)
-    #             context.bot_data.setdefault(
-    #                 "group_ids", set()).discard(chat.id)
-    #     else:
-    #         if not was_member and is_member:
-    #             logger.info("%s added the bot to the channel %s",
-    #                         cause_name, chat.title)
-    #             context.bot_data.setdefault("channel_ids", set()).add(chat.id)
-    #         elif was_member and not is_member:
-    #             logger.info("%s removed the bot from the channel %s",
-    #                         cause_name, chat.title)
-    #             context.bot_data.setdefault(
-    #                 "channel_ids", set()).discard(chat.id)
-
-    # def show_chats(update: Update, context: CallbackContext) -> None:
-        """Shows which chats the bot is in"""
-        user_ids = ", ".join(
-            str(uid) for uid in context.bot_data.setdefault("user_ids", set()))
-        group_ids = ", ".join(
-            str(gid) for gid in context.bot_data.setdefault("group_ids", set()))
-        channel_ids = ", ".join(
-            str(cid) for cid in context.bot_data.setdefault("channel_ids", set()))
-        text = (
-            f"@{context.bot.username} is currently in a conversation with the user IDs {user_ids}."
-            f" Moreover it is a member of the groups with IDs {group_ids} "
-            f"and administrator in the channels with IDs {channel_ids}."
-        )
-        update.effective_message.reply_text(text)
+        print(update.chat_member)
 
     """Start the bot."""
     MASTER = 'igor531205'
     global masters
     masters = [MASTER]
-    global chats_users
-    chats_users = dict()
+    global chats
+    chats = []
 
     # Create the Updater and pass it your bot's token.
     TOKEN = '5484436077:AAHRLCdLdDzLyRbU2M3iWsRkOHIM_DmFQeE'
@@ -391,33 +318,13 @@ def main():
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
 
-    # import logging
-
-    # logging.basicConfig(
-    #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-    # )
-
-    # logger = logging.getLogger(__name__)
-
     # Commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler(start.__name__, start))
     dispatcher.add_handler(CommandHandler('kill', kill))
-
-    # dispatcher.add_handler(CommandHandler("show_chats", show_chats))
-    # dispatcher.add_handler(ChatMemberHandler(track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
-
-    def print_users(update: Update, context: CustomContext) -> None:
-        """Show which users have been using this bot."""
-        update.message.reply_text(
-            'The following user IDs have used this bot: '
-            f'{", ".join(map(str, context.bot_user_ids))}'
-        )
-    dispatcher.add_handler(CommandHandler("print_users", print_users))
 
     # Message for bot - answer in Telegram
     dispatcher.add_handler(MessageHandler(
-        # TODO Filters.all & Filters.text
-        ~Filters.command, echo))
+        Filters.all, echo))
 
     # Start the Bot
     updater.start_polling()
@@ -425,5 +332,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print('Start programm')
     main()
