@@ -243,6 +243,7 @@ from telegram.ext import (
     CallbackContext)
 import logging
 from typing import Tuple, Optional
+from logging import INFO, basicConfig, getLogger
 
 
 async def bot(BOT_TOKEN: str, BOT_OWNER: str):
@@ -250,6 +251,11 @@ async def bot(BOT_TOKEN: str, BOT_OWNER: str):
     :param TOKEN: Key for bot.
     :param MASTER: username for master of bot.
     """
+
+    # Init logger
+    basicConfig(format='%(asctime)s - %(name)s - %(message)s',
+                level=INFO)
+    logger = getLogger(__name__).info
 
     global masters
     masters = [BOT_OWNER]
