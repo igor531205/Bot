@@ -237,7 +237,9 @@ def log(data_log: list):
                    + '\n')
 
 
-def main():
+async def bot(TOKEN: str, MASTER: str):
+    """Start the bot."""
+
     import os
     import signal
     from telegram import (
@@ -305,14 +307,12 @@ def main():
         print(update.chat_member)
 
     """Start the bot."""
-    MASTER = 'igor531205'
     global masters
     masters = [MASTER]
     global chats
     chats = []
 
     # Create the Updater and pass it your bot's token.
-    TOKEN = '5484436077:AAHRLCdLdDzLyRbU2M3iWsRkOHIM_DmFQeE'
     updater = Updater(TOKEN)
 
     # Get the dispatcher to register handlers
@@ -328,8 +328,14 @@ def main():
 
     # Start the Bot
     updater.start_polling()
-    updater.idle()
+    await updater.idle()
 
 
 if __name__ == '__main__':
-    main()
+
+    import asyncio
+
+    TOKEN = '5484436077:AAHRLCdLdDzLyRbU2M3iWsRkOHIM_DmFQeE'
+    MASTER = 'igor531205'
+
+    asyncio.run(bot(TOKEN, MASTER))
