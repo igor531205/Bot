@@ -2,8 +2,11 @@
 git init
 
 Виртуальное окружение
-./ ~python -m venv .env
-./ .env/Scripts/python.exe -m pip list
-./ .env/Scripts/python.exe -m pip freeze > requirements.txt
-./ .env/Scripts/python.exe -m pip install -r requirements.txt
-./ .env/Scripts/python.exe -m pip install python-telegram-bot
+./ ~python -m venv .env                                                 - создать виртуальное окружение
+./ .env/Scripts/python.exe -m pip list                                  - показать установленные библиотеки
+./ .env/Scripts/python.exe -m pip freeze > requirements.txt             - сохранить установленные библиотеки в файл
+./ .env/Scripts/python.exe -m pip install -r requirements.txt           - загрузить библиотеки из файла
+./ .env/Scripts/python.exe -m pip install python-telegram-bot           - установить библиотеку
+
+Комманды
+os.system('cls')                                                        - очистить экран терминала

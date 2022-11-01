@@ -225,117 +225,119 @@
 
 #     app.run_polling()
 
-def log(data_log: list):
-    """log to file.
+import os
+import signal
+from telegram import (
+    Update,
+    Chat,
+    ChatMember,
+    ParseMode,
+    ChatMemberUpdated,
+    ForceReply)
+from telegram.ext import (
+    Updater,
+    CommandHandler,
+    MessageHandler,
+    ChatMemberHandler,
+    Filters,
+    CallbackContext)
+import logging
+from typing import Tuple, Optional
+
+
+async def bot(BOT_TOKEN: str, BOT_OWNER: str):
+    """Start the bot.
+    :param TOKEN: Key for bot.
+    :param MASTER: username for master of bot.
     """
 
-    from datetime import datetime
-
-    with open('db.csv', 'a') as data:
-        data.write(','.join([f'{datetime.now():%Y.%m.%d %H:%M}']
-                            + [str(item) for item in data_log])
-                   + '\n')
-
-
-async def bot(TOKEN: str, MASTER: str):
-    """Start the bot."""
-
-    import os
-    import signal
-    from telegram import (
-        Update,
-        Chat,
-        ChatMember,
-        ParseMode,
-        ChatMemberUpdated,
-        ForceReply)
-    from telegram.ext import (
-        Updater,
-        CommandHandler,
-        MessageHandler,
-        ChatMemberHandler,
-        Filters,
-        CallbackContext)
-    import logging
-    from typing import Tuple, Optional
-
-    logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-    )
-
-    logger = logging.getLogger(__name__)
-
-    def start(update: Update, context: CallbackContext) -> None:
-        """Command start."""
-        if update.effective_user.username in masters:
-
-            user_name = update.effective_user.full_name if \
-                update.effective_user.full_name is None else \
-                update.effective_user.username
-
-            # chats.append(update.effective_chat.id) TODO: if
-
-            update.message.reply_text(f'Hello  "{user_name}"')
-        print(chats)
-        # chat_id = update.message.chat_id
-        # first_name = update.message.chat.first_name
-        # last_name = update.message.chat.last_name
-        # username = update.message.chat.username
-        # print("chat_id : {}; and firstname : {}; lastname : {};  username {}". format(
-        #     chat_id, first_name, last_name, username))
-
-        # print(ChatMemberHandler.CHAT_MEMBER)
-        # chats_users[update.effective_chat.id] = TODO
-
-    def kill(update: Update, context: CallbackContext) -> None:
-        """Command kill Bot."""
-
-        if update.effective_user.username in masters:
-
-            update.message.reply_text('Kill Bot')
-
-            if update.effective_chat.type != 'private':
-
-                update.effective_chat.leave()
-
-            chats.remove(update.effective_chat.id)
-            # os.kill(os.getpid(), signal.SIGINT)
-
-    def echo(update: Update, context: CallbackContext) -> None:
-        """Echo the user message."""
-        update.message.reply_text(update.message.text)
-        print(update.chat_member)
-
-    """Start the bot."""
     global masters
-    masters = [MASTER]
+    masters = [BOT_OWNER]
     global chats
     chats = []
 
     # Create the Updater and pass it your bot's token.
-    updater = Updater(TOKEN)
+    updater = Updater(BOT_TOKEN)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
+    handler = dispatcher.add_handler
 
-    # Commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler(start.__name__, start))
-    dispatcher.add_handler(CommandHandler('kill', kill))
+    # Commands from Telegram
+    handler(CommandHandler(Filters.command, bot_command))
 
-    # Message for bot - answer in Telegram
-    dispatcher.add_handler(MessageHandler(
-        Filters.all, echo))
+    # Message from Telegram
+    handler(MessageHandler(Filters.text & ~Filters.command, bot_message))
+
+    logger('Start Bot')
 
     # Start the Bot
     updater.start_polling()
     await updater.idle()
 
+    logger('Stop bot')
 
-if __name__ == '__main__':
 
-    import asyncio
+def bot_command(update: Update, context: CallbackContext) -> None:
+    """Command start."""
+    if update.effective_user.username in masters:
 
-    TOKEN = '5484436077:AAHRLCdLdDzLyRbU2M3iWsRkOHIM_DmFQeE'
-    MASTER = 'igor531205'
+        user_name = update.effective_user.full_name if \
+            update.effective_user.full_name is None else \
+            update.effective_user.username
 
-    asyncio.run(bot(TOKEN, MASTER))
+        # chats.append(update.effective_chat.id) TODO: if
+
+        update.message.reply_text(f'Hello  "{user_name}"')
+    print(chats)
+    # chat_id = update.message.chat_id
+    # first_name = update.message.chat.first_name
+    # last_name = update.message.chat.last_name
+    # username = update.message.chat.username
+    # print("chat_id : {}; and firstname : {}; lastname : {};  username {}". format(
+    #     chat_id, first_name, last_name, username))
+
+    # print(ChatMemberHandler.CHAT_MEMBER)
+    # chats_users[update.effective_chat.id] = TODO
+
+
+# def kill(update: Update, context: CallbackContext) -> None:
+#     """Command kill Bot."""
+
+#     if update.effective_user.username in masters:
+
+#         update.message.reply_text('Kill Bot')
+
+#         if update.effective_chat.type != 'private':
+
+#             update.effective_chat.leave()
+
+#         chats.remove(update.effective_chat.id)
+#         # os.kill(os.getpid(), signal.SIGINT)
+
+
+# def echo(update: Update, context: CallbackContext) -> None:
+#     """Echo the user message."""
+#     update.message.reply_text(update.message.text)
+#     print(update.chat_member)
+
+
+# def main():
+#     # Commands - answer in Telegram
+#     dispatcher.add_handler(CommandHandler(start.__name__, start))
+#     dispatcher.add_handler(CommandHandler('kill', kill))
+
+#     # Message for bot - answer in Telegram
+#     dispatcher.add_handler(MessageHandler(
+#         Filters.all, echo))
+
+# def log(data_log: list):
+#     """log to file.
+#     """
+
+#     from datetime import datetime
+
+#     with open('db.csv', 'a') as data:
+#         data.write(','.join([f'{datetime.now():%Y.%m.%d %H:%M}']
+#                             + [str(item) for item in data_log])
+#                    + '\n')
