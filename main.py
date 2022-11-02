@@ -1,7 +1,7 @@
 import os
 import asyncio
 import logging
-from telegrambot import bot
+from telegrambot import telegram_bot
 
 
 if __name__ == '__main__':
@@ -23,4 +23,4 @@ if __name__ == '__main__':
     BOT_OWNER = 'igor531205'
 
     # Run bot
-    asyncio.run(bot(BOT_TOKEN, BOT_OWNER))
+    asyncio.run(telegram_bot(BOT_TOKEN, BOT_OWNER))

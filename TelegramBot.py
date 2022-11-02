@@ -261,6 +261,8 @@
 
 # def bot_command(update: Update, context: CallbackContext) -> None:
 #     """Command start."""
+#     user_says = " ".join(context.args)
+# await update.message.reply_text("Welcome to my awesome bot!")
 #     if update.effective_user.username in masters:
 
 #         user_name = update.effective_user.full_name if \
@@ -302,10 +304,12 @@ from telegram.ext import (
     MessageHandler,
     ChatMemberHandler,
     Filters,
-    CallbackContext)
+    CallbackContext,
+    Handler,
+    run_async)
 
 
-async def bot(BOT_TOKEN: str, BOT_OWNER: str):
+async def telegram_bot(BOT_TOKEN: str, BOT_OWNER: str):
     """Start the bot.
     Args:
         BOT_TOKEN: Key for bot.
@@ -338,7 +342,9 @@ async def bot(BOT_TOKEN: str, BOT_OWNER: str):
     handler = dispatcher.add_handler
 
     # Commands from Telegram
-    # dispatcher.add_handler(CommandHandler(Filters.all, bot_command))
+    # dispatcher.add_handler(CommandHandler('start', bot_start))
+    # dispatcher.add_handler(CommandHandler('stop', bot_stop))
+    # dispatcher.add_handler(CommandHandler('kill', bot_kill))
 
     # Message from Telegram
     handler(MessageHandler(Filters.text & ~Filters.command, bot_message))
