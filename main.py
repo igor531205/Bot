@@ -18,7 +18,7 @@ if __name__ == '__main__':
                             f'%(message)s']),
                         level=logging.INFO, encoding='utf-8')
 
-    # Init Bot Token and username owner of Bot
+    # Init Bot Token and username owner of Bot "@GB_for_HomeWork_bot"
     BOT_TOKEN = '5484436077:AAHRLCdLdDzLyRbU2M3iWsRkOHIM_DmFQeE'
     BOT_OWNER = 'igor531205'
 

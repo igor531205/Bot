@@ -248,16 +248,7 @@
 # def kill(update: Update, context: CallbackContext) -> None:
 #     """Command kill Bot."""
 
-#     if update.effective_user.username in masters:
-
-#         update.message.reply_text('Kill Bot')
-
-#         if update.effective_chat.type != 'private':
-
-#             update.effective_chat.leave()
-
-#         chats.remove(update.effective_chat.id)
-#         # os.kill(os.getpid(), signal.SIGINT)
+#
 
 # def bot_command(update: Update, context: CallbackContext) -> None:
 #     """Command start."""
@@ -319,39 +310,106 @@ async def telegram_bot(BOT_TOKEN: str, BOT_OWNER: str):
     def bot_message(update: Update, context: CallbackContext) -> None:
         """Echo the user message."""
 
-        logging.getLogger(__name__).info(', '.join([
+        log.info(', '.join([
             f'Chat: {update.message.chat_id}',
             f'User: {update.message.from_user.username}',
             f'FullName: {update.message.from_user.full_name}',
             f'Message: {update.message.text}']))
 
-        Bot(token=BOT_TOKEN).send_message(
-            chat_id=update.message.chat_id, text=update.message.text)
-        # update.message.reply_text(update.message.text)
+        if update.message.chat_id in chats:
+            update.message.reply_text(update.message.text)
+
+    def bot_start(update: Update, context: CallbackContext) -> None:
+        """Command start for bot."""
+
+        log.info(', '.join([
+            f'Chat: {update.message.chat_id}',
+            f'User: {update.message.from_user.username}',
+            f'FullName: {update.message.from_user.full_name}',
+            f'Message: {update.message.text}']))
+
+        if update.message.from_user.username in masters:
+
+            update.message.reply_text(
+                f'Hello, {update.message.from_user.full_name}' if
+                update.message.chat.type == 'private' else
+                f'Hello, {update.message.from_user.full_name}' +
+                ' ' + f'and other Users')
+
+            chats.append(update.message.chat.id)
+            log.info(
+                f'Chat add to bot: {update.message.chat_id}')
+
+    def bot_stop(update: Update, context: CallbackContext) -> None:
+        """Command stop for bot."""
+
+        log.info(', '.join([
+            f'Chat: {update.message.chat_id}',
+            f'User: {update.message.from_user.username}',
+            f'FullName: {update.message.from_user.full_name}',
+            f'Message: {update.message.text}']))
+
+        if update.message.from_user.username in masters:
+
+            update.message.reply_text(
+                f'Good bye, {update.message.from_user.full_name}' if
+                update.message.chat.type == 'private' else
+                f'Good bye, {update.message.from_user.full_name}' +
+                ' ' + f'and other Users')
+
+            if update.message.chat.type != 'private':
+
+                update.message.chat.leave()
+                log.info(
+                    f'Bot leave chat: {update.message.chat_id}')
+
+            chats.remove(update.message.chat.id)
+            log.info(
+                f'Chat remove from bot: {update.message.chat_id}')
+
+    def bot_kill(update: Update, context: CallbackContext) -> None:
+        """Command kill for bot."""
+
+        log.info(', '.join([
+            f'Chat: {update.message.chat_id}',
+            f'User: {update.message.from_user.username}',
+            f'FullName: {update.message.from_user.full_name}',
+            f'Message: {update.message.text}']))
+
+        if update.message.from_user.username in masters:
+
+            update.message.reply_text(
+                f'You "Kill" me, {update.message.from_user.full_name}')
+
+            os.kill(os.getpid(), signal.SIGABRT)
 
     global masters
     masters = [BOT_OWNER]
     global chats
     chats = []
 
+    # Create the Logger
+    log = logging.getLogger(__name__)
+
     # Create the Updater and pass it your bot's token.
     updater = Updater(BOT_TOKEN)
+    sender = Bot(BOT_TOKEN)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
-    handler = dispatcher.add_handler
 
     # Commands from Telegram
-    # dispatcher.add_handler(CommandHandler('start', bot_start))
-    # dispatcher.add_handler(CommandHandler('stop', bot_stop))
-    # dispatcher.add_handler(CommandHandler('kill', bot_kill))
+    dispatcher.add_handler(CommandHandler('start', bot_start))
+    dispatcher.add_handler(CommandHandler('stop', bot_stop))
+    dispatcher.add_handler(CommandHandler('kill', bot_kill))
 
     # Message from Telegram
-    handler(MessageHandler(Filters.text & ~Filters.command, bot_message))
+    dispatcher.add_handler(MessageHandler(
+        Filters.text & ~Filters.command, bot_message))
 
     # Start the Bot
     updater.start_polling()
-    logging.getLogger(__name__).info('Bot started')
+    log.info('Bot started')
 
     updater.idle()
-    logging.getLogger(__name__).info('Stop bot')
+    log.info('Stop bot')
