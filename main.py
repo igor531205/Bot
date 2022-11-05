@@ -1,14 +1,14 @@
 import os
 import asyncio
 import logging
-from telegrambot import telegram_bot
+from methods import *
+# from telegrambot import telegram_bot
 
 
 if __name__ == '__main__':
 
     # Clear Terminal
     os.system('cls')
-
     # Init logger
     logging.basicConfig(filename='logging.log', filemode='a',
                         format='; '.join([
@@ -23,4 +23,4 @@ if __name__ == '__main__':
     BOT_OWNER = 'igor531205'
 
     # Run bot
-    asyncio.run(telegram_bot(BOT_TOKEN, BOT_OWNER))
+    # asyncio.run(telegram_bot(BOT_TOKEN, BOT_OWNER))
