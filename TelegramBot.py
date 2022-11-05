@@ -274,6 +274,19 @@
 # print(ChatMemberHandler.CHAT_MEMBER)
 # chats_users[update.effective_chat.id]
 
+# def start(update: Update, context: CallbackContext):
+#     """
+#     the callback for handling start command
+#     """
+#     # getting the bot from context
+#     # documentation: https://python-telegram-bot.readthedocs.io/en/latest/telegram.bot.html#telegram-bot
+#     bot: Bot = context.bot
+
+#     # sending message to the chat from where it has received the message
+#     # documentation: https://python-telegram-bot.readthedocs.io/en/latest/telegram.bot.html#telegram.Bot.send_message
+#     bot.send_message(chat_id=update.effective_chat.id,
+#                      text="You have just entered start command")
+
 
 import os
 import signal
