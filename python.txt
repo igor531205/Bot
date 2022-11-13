@@ -10,3 +10,6 @@ git init
 
 Комманды
 os.system('cls')                                                        - очистить экран терминала
+os.system('pip freeze > requirements.txt')                              - сохранить установленные библиотеки в файл
+
+
